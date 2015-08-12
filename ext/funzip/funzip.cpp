@@ -7,7 +7,7 @@ using namespace std;
 
 void funzip(string fileName, string destDir) {
   try {
-    Unzipper().unzip(fileName, destDir);
+    Unzipper(fileName).unzip(destDir);
   } catch (string err) {
     rb_raise(rb_eStandardError, err.c_str());
   }

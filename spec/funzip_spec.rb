@@ -16,7 +16,7 @@ describe Funzip do
     end
 
     it 'raises an error on failure' do
-      expect{Funzip.unzip(zip_path('test'), '/root')}.to raise_error StandardError, /fopen/
+      expect{Funzip.unzip(zip_path('test'), '/root')}.to raise_error StandardError, 'failed to open output file: /root/a.txt'
     end
 
     # it 'does not leak small' do

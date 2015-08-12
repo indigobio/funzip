@@ -3,68 +3,66 @@
 #include <string>
 #include <algorithm>
 #include <iostream>
+#include <fstream>
 
 #include "unzipper.h"
 #include "util.h"
 
 using namespace std;
 
-Unzipper::Unzipper() : archive(nullptr), entry(nullptr), outFile(nullptr) { }
-
-Unzipper::~Unzipper() {
-  if (entry != nullptr)
-    zip_fclose(entry);
-  if (archive != nullptr)
-    zip_close(archive);
-  if (outFile != nullptr)
-    fclose(outFile);
+Unzipper::Unzipper(string archivePath) {
+  archive = TRY(zip_open(archivePath.c_str(), ZIP_CHECKCONS, nullptr), "zip_open");
 }
 
-void Unzipper::unzip(string archivePath, string destDir) {
+Unzipper::~Unzipper() {
+  TRY0(zip_close(archive), "zip_close");
+}
+
+void Unzipper::unzip(string destDir) {
   destDir = trimString(destDir, "/");
-  archive = TRY(zip_open(archivePath.c_str(), ZIP_CHECKCONS, nullptr), "zip_open");
   auto numEntries = zip_get_num_entries(archive, 0);
   for (zip_int64_t i=0; i<numEntries; i++)
-    extractEntry(i, destDir);
-  TRY0(zip_close(archive), "zip_close");
-  archive = nullptr;
+    ZipEntry(archive, i).extract(destDir);
+}
+
+ZipEntry::ZipEntry(zip *archive, zip_uint64_t entryIdx) {
+  entry = TRY(zip_fopen_index(archive, entryIdx, 0), "zip_fopen_index");
+  name = string(TRY(zip_get_name(archive, entryIdx, 0), "zip_get_name"));
+  std::replace(name.begin(), name.end(), '\\', '/');
+}
+
+ZipEntry::~ZipEntry() {
+  TRY0(zip_fclose(entry), "zip_fclose");
 }
 
 #define BUFFER_SIZE  16384
 
-void Unzipper::extractEntry(zip_uint64_t entryIdx, const string& destDir) {
-  entry = TRY(zip_fopen_index(archive, entryIdx, 0), "zip_fopen_index");
-  string fName = string(TRY(zip_get_name(archive, entryIdx, 0), "zip_get_name"));
-  std::replace(fName.begin(), fName.end(), '\\', '/');
-  string destPath = destDir + "/" + fName;
+void ZipEntry::extract(const string& destDir) {
+  string destPath = destDir + "/" + name;
   
-  if (destPath.back() == '/')
+  if (destPath.back() == '/') {
     mkdir_p(destPath);
-  else {
-    char buf[BUFFER_SIZE];
+  } else {
     mkdir_p(dirname(destPath));
-    outFile = TRY(fopen(destPath.c_str(), "w"), "fopen " + destPath);
+    char buf[BUFFER_SIZE];
+    ofstream outFile;
+    outFile.open(destPath.c_str(), ofstream::out);
+    if (!outFile.is_open())
+      throw string("failed to open output file: " + destPath);
     
   readMore:
     zip_int64_t nRead = zip_fread(entry, &buf, BUFFER_SIZE);
     if (nRead == -1)
       throw string("error reading from zip file");
     else if (nRead > 0) {
-      if (fwrite(&buf, 1, nRead, outFile) != (size_t)nRead)
-        throw string("error writing to destination");
+      outFile.write(buf, (long int)nRead);
       goto readMore;
     }
-    
-    TRY0(fclose(outFile), "fclose");
-    outFile = nullptr;    
   }
-  
-  TRY0(zip_fclose(entry), "zip_fclose");
-  entry = nullptr;
 }
 
 template<typename T>
-T Unzipper::TRY(T value, std::string desc) {
+T TRY(T value, std::string desc) {
   if (value == nullptr)
     throw desc;
   else
@@ -72,7 +70,7 @@ T Unzipper::TRY(T value, std::string desc) {
 }
 
 template<typename T>
-T Unzipper::TRY0(T value, std::string desc) {
+T TRY0(T value, std::string desc) {
   if (value != 0)
     throw desc + " failed";
   else
