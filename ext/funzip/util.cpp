@@ -9,7 +9,7 @@
 using namespace std;
 
 string trimString(string s, const char *chars) {
-  size_t endpos = s.find_last_not_of("/");
+  size_t endpos = s.find_last_not_of(chars);
   if (string::npos == endpos)
     return s;
   else
@@ -31,7 +31,7 @@ void mkdir_p(string dir) {
 // from stack overflow or something
 int mkdir_p2(const char *dir) {
   char tmp[2048];
-  char *p = NULL;
+  char *p = nullptr;
   size_t len;
   mode_t mode = 0755;
 

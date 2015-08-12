@@ -19,6 +19,22 @@ describe Funzip do
       expect{Funzip.unzip(zip_path('test'), '/root')}.to raise_error StandardError, /fopen/
     end
 
+    # it 'does not leak small' do
+    #   10000000.times do
+    #     Dir.mktmpdir do |dir|
+    #       Funzip.unzip(zip_path('test'), dir)
+    #     end
+    #   end
+    # end
+    #
+    # it 'does not leak big' do
+    #   10000.times do
+    #     Dir.mktmpdir do |dir|
+    #       Funzip.unzip('/home/pwinton/Downloads/iamMANOLIS - Dayte.zip', dir)
+    #     end
+    #   end
+    # end
+
     def zip_path(name)
       File.join(File.dirname(__FILE__), "fixtures/#{name}.zip")
     end
