@@ -37,24 +37,28 @@ void Unzipper::extractEntry(zip_uint64_t entryIdx, const string& destDir) {
   string fName = string(TRY(zip_get_name(archive, entryIdx, 0), "zip_get_name"));
   std::replace(fName.begin(), fName.end(), '\\', '/');
   string destPath = destDir + "/" + fName;
-  if (destPath.back() == '/') { mkdir_p(destPath); return; }
-  mkdir_p(dirname(destPath));
   
-  outFile = TRY(fopen(destPath.c_str(), "w"), "fopen " + destPath);
-  char buf[BUFFER_SIZE];
-  
- readMore:
-  zip_int64_t nRead = zip_fread(entry, &buf, BUFFER_SIZE);
-  if (nRead == -1)
-    throw string("error reading from zip file");
-  else if (nRead > 0) {
-    if (fwrite(&buf, 1, nRead, outFile) != (size_t)nRead)
-      throw string("error writing to destination");
-    goto readMore;
+  if (destPath.back() == '/')
+    mkdir_p(destPath);
+  else {
+    char buf[BUFFER_SIZE];
+    mkdir_p(dirname(destPath));
+    outFile = TRY(fopen(destPath.c_str(), "w"), "fopen " + destPath);
+    
+  readMore:
+    zip_int64_t nRead = zip_fread(entry, &buf, BUFFER_SIZE);
+    if (nRead == -1)
+      throw string("error reading from zip file");
+    else if (nRead > 0) {
+      if (fwrite(&buf, 1, nRead, outFile) != (size_t)nRead)
+        throw string("error writing to destination");
+      goto readMore;
+    }
+    
+    TRY0(fclose(outFile), "fclose");
+    outFile = nullptr;    
   }
   
-  TRY0(fclose(outFile), "fclose");
-  outFile = nullptr;
   TRY0(zip_fclose(entry), "zip_fclose");
   entry = nullptr;
 }
