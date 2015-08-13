@@ -20,8 +20,8 @@ Unzipper::~Unzipper() {
 
 void Unzipper::unzip(string destDir) {
   destDir = trimString(destDir, "/");
-  auto numEntries = zip_get_num_entries(archive, 0);
-  for (zip_int64_t i=0; i<numEntries; i++)
+  zip_uint64_t numEntries = zip_get_num_entries(archive, 0);
+  for (zip_uint64_t i=0; i<numEntries; i++)
     ZipEntry(archive, i).extract(destDir);
 }
 

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'funzip'
-  s.version       = '0.0.5'
+  s.version       = '0.0.6'
   s.summary       = 'Simple native unzip'
   s.author        = 'Peter Winton'
   s.email         = %w(info@indigobio.com)
