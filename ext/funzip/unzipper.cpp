@@ -26,8 +26,8 @@ void Unzipper::unzip(string destDir) {
 }
 
 ZipEntry::ZipEntry(zip *archive, zip_uint64_t entryIdx) {
-  entry = TRY(zip_fopen_index(archive, entryIdx, 0), "zip_fopen_index");
   name = string(TRY(zip_get_name(archive, entryIdx, 0), "zip_get_name"));
+  entry = TRY(zip_fopen_index(archive, entryIdx, 0), "zip_fopen_index");
   std::replace(name.begin(), name.end(), '\\', '/');
 }
 
