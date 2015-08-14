@@ -15,7 +15,7 @@ Unzipper::Unzipper(string archivePath) {
 }
 
 Unzipper::~Unzipper() {
-  TRY0(zip_close(archive), "zip_close");
+  zip_close(archive);
 }
 
 void Unzipper::unzip(string destDir) {
@@ -32,7 +32,7 @@ ZipEntry::ZipEntry(zip *archive, zip_uint64_t entryIdx) {
 }
 
 ZipEntry::~ZipEntry() {
-  TRY0(zip_fclose(entry), "zip_fclose");
+  zip_fclose(entry);
 }
 
 #define BUFFER_SIZE  16384
