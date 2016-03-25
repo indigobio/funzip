@@ -9,7 +9,7 @@ void funzip(string fileName, string destDir) {
   try {
     Unzipper(fileName).unzip(destDir);
   } catch (string err) {
-    rb_raise(rb_eStandardError, err.c_str());
+    rb_raise(rb_eStandardError, "%s", err.c_str());
   }
 }
 
