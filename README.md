@@ -4,6 +4,9 @@
 directory. It is implemented in C++ using libzip to work around memory
 leak problems with Ruby's built-in `zip`.
 
+## System prerequisites
+
+- `libzip`
 
 ## Usage
 
