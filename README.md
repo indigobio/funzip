@@ -16,6 +16,9 @@ require 'funzip'
 Funzip.unzip('archive.zip', '/tmp/destdir')
 ```
 
+On success, `unzip` returns normally. On failure, `unzip` raises a
+`StandardError` with a (hopefully) helpful message.
+
 
 ## Development
 
