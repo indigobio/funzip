@@ -22,12 +22,19 @@ On success, `unzip` returns normally. On failure, `unzip` raises a
 
 ## Development
 
-Run `rake compile` to build the gem.
+Run `bundle exec rake compile` to build the gem.
 
 ```
-$ rake compile
+$ bundle exec rake compile
 ...compiling...
 $ bundle exec irb
-2.0.0-p247 :001 > require 'funzip'
+> require 'funzip'
  => true
- ```
+```
+
+RSpec can only be run after compiling
+
+```
+bundle exec rake compile
+bundle exec rspec
+```

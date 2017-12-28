@@ -1,4 +1,3 @@
-require 'rspec'
 require 'funzip'
 require 'tmpdir'
 
@@ -16,7 +15,9 @@ describe Funzip do
     end
 
     it 'raises an error on failure' do
-      expect{Funzip.unzip(zip_path('test'), '/root')}.to raise_error StandardError, 'failed to open output file: /root/a.txt'
+      expect do
+        Funzip.unzip(zip_path('test'), '/root')
+      end.to raise_error StandardError, 'failed to open output file: /root/a.txt'
     end
 
     # it 'does not leak small' do
