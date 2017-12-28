@@ -12,4 +12,5 @@ Gem::Specification.new do |s|
   s.extensions << 'ext/funzip/extconf.rb'
   s.add_development_dependency 'rake-compiler', '~> 0'
   s.add_development_dependency 'rspec', '~> 3.0'
+  s.add_development_dependency 'rspec_junit_formatter', '~> 0.2.0'
 end
