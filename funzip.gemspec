@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'funzip'
-  s.version       = '0.0.9'
+  s.version       = '0.1.0'
   s.summary       = 'Simple native unzip'
   s.author        = 'Peter Winton'
   s.email         = %w(info@indigobio.com)
@@ -12,4 +12,5 @@ Gem::Specification.new do |s|
   s.extensions << 'ext/funzip/extconf.rb'
   s.add_development_dependency 'rake-compiler', '~> 0'
   s.add_development_dependency 'rspec', '~> 3.0'
+  s.add_development_dependency 'rspec_junit_formatter', '~> 0.2.0'
 end
